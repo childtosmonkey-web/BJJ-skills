@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: bjj-skills
+    runtime: node
+    plan: free
+    buildCommand: npm install && npx prisma db push && npx tsx prisma/seed.ts && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: NODE_ENV
+        value: production
