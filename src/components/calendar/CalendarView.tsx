@@ -73,26 +73,33 @@ export default function CalendarView({ dotsByDate }: Props) {
           const dots = dotsByDate[dateStr] ?? [];
           const inMonth = isSameMonth(day, current);
           const today = isToday(day);
+          const hasMemos = dots.length > 0;
 
           return (
             <button
               key={dateStr}
               onClick={() => router.push(`/memos/${dateStr}`)}
-              className="aspect-square rounded-xl flex flex-col items-center justify-center gap-1 transition-colors relative"
+              className="aspect-square rounded-xl flex flex-col items-center justify-center gap-1 transition-all hover:brightness-125"
               style={{
-                background: today ? "#1e3a5f" : inMonth ? "#1e293b" : "transparent",
-                opacity: inMonth ? 1 : 0.3,
-                border: today ? "1px solid #3b82f6" : "1px solid transparent",
+                background: inMonth ? "#1e293b" : "transparent",
+                opacity: inMonth ? 1 : 0.25,
               }}
             >
-              <span
-                className="text-sm font-medium"
-                style={{ color: today ? "#93c5fd" : inMonth ? "#f1f5f9" : "#475569" }}
+              {/* 日付数字 — 今日は赤丸で囲む */}
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold"
+                style={
+                  today
+                    ? { background: "#ef4444", color: "#fff" }
+                    : { color: inMonth ? "#f1f5f9" : "#475569" }
+                }
               >
                 {format(day, "d")}
-              </span>
-              {dots.length > 0 && (
-                <div className="flex gap-0.5 flex-wrap justify-center px-1">
+              </div>
+
+              {/* メモドット */}
+              {hasMemos ? (
+                <div className="flex gap-0.5 justify-center">
                   {dots.slice(0, 3).map((dot, i) => (
                     <span
                       key={i}
@@ -101,10 +108,27 @@ export default function CalendarView({ dotsByDate }: Props) {
                     />
                   ))}
                 </div>
+              ) : (
+                /* ドットがない日も高さを揃えるためのスペーサー */
+                <span className="w-1.5 h-1.5" />
               )}
             </button>
           );
         })}
+      </div>
+
+      {/* 凡例 */}
+      <div className="flex items-center gap-4 mt-6 text-xs" style={{ color: "#475569" }}>
+        <div className="flex items-center gap-1.5">
+          <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: "#ef4444", color: "#fff" }}>
+            1
+          </div>
+          <span>今日</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full inline-block" style={{ background: "#3b82f6" }} />
+          <span>メモあり</span>
+        </div>
       </div>
     </div>
   );
