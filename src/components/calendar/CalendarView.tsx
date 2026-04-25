@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   startOfMonth,
@@ -25,6 +25,18 @@ type Props = {
 export default function CalendarView({ dotsByDate }: Props) {
   const router = useRouter();
   const [current, setCurrent] = useState(new Date());
+  const [slideClass, setSlideClass] = useState("");
+  const animKey = useRef(0);
+
+  function navigate(direction: "prev" | "next") {
+    const cls = direction === "prev" ? "calendar-slide-right" : "calendar-slide-left";
+    animKey.current += 1;
+    setSlideClass("");
+    requestAnimationFrame(() => {
+      setSlideClass(cls);
+      setCurrent((c) => direction === "prev" ? subMonths(c, 1) : addMonths(c, 1));
+    });
+  }
 
   const monthStart = startOfMonth(current);
   const monthEnd = endOfMonth(current);
@@ -39,7 +51,7 @@ export default function CalendarView({ dotsByDate }: Props) {
       {/* header */}
       <div className="flex items-center justify-between mb-6">
         <button
-          onClick={() => setCurrent(subMonths(current, 1))}
+          onClick={() => navigate("prev")}
           className="w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-colors hover:text-white"
           style={{ color: "#94a3b8", background: "#1e293b" }}
         >
@@ -49,7 +61,7 @@ export default function CalendarView({ dotsByDate }: Props) {
           {format(current, "yyyy年 M月", { locale: ja })}
         </h2>
         <button
-          onClick={() => setCurrent(addMonths(current, 1))}
+          onClick={() => navigate("next")}
           className="w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-colors hover:text-white"
           style={{ color: "#94a3b8", background: "#1e293b" }}
         >
@@ -57,6 +69,7 @@ export default function CalendarView({ dotsByDate }: Props) {
         </button>
       </div>
 
+      <div key={animKey.current} className={slideClass} style={{ overflow: "hidden" }}>
       {/* weekday headers */}
       <div className="grid grid-cols-7 mb-2">
         {weekdays.map((d) => (
@@ -116,6 +129,7 @@ export default function CalendarView({ dotsByDate }: Props) {
           );
         })}
       </div>
+      </div>{/* end animated wrapper */}
 
       {/* 凡例 */}
       <div className="flex items-center gap-4 mt-6 text-xs" style={{ color: "#475569" }}>
