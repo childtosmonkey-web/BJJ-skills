@@ -10,13 +10,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "GOOGLE_API_KEY not configured" }, { status: 503 });
   }
 
-  const genai = new GoogleGenerativeAI(apiKey);
-  const model = genai.getGenerativeModel({
-    model: "gemini-2.0-flash",
-    systemInstruction: "あなたはブラジリアン柔術の経験豊富なコーチです。練習メモを読んで、BJJの専門用語を正確に使いながら整理・校正してください。",
-  });
+  try {
+    const genai = new GoogleGenerativeAI(apiKey);
+    const model = genai.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      systemInstruction: "あなたはブラジリアン柔術の経験豊富なコーチです。練習メモを読んで、BJJの専門用語を正確に使いながら整理・校正してください。",
+    });
 
-  const result = await model.generateContent(`以下の練習メモを次の形式で整理してください：
+    const result = await model.generateContent(`以下の練習メモを次の形式で整理してください：
 
 ## 学んだ技術の要点
 （箇条書きで）
@@ -31,6 +32,10 @@ export async function POST(req: NextRequest) {
 【原文メモ】
 ${content}`);
 
-  const organized = result.response.text();
-  return NextResponse.json({ organized });
+    const organized = result.response.text();
+    return NextResponse.json({ organized });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
