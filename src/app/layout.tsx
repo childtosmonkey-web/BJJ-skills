@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navigation from "@/components/nav/Navigation";
+import RefreshOnFocus from "@/components/RefreshOnFocus";
 
 export const metadata: Metadata = {
   title: "BJJ Skills",
@@ -11,6 +12,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <body>
+        <RefreshOnFocus />
         <Navigation />
         <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
       </body>
