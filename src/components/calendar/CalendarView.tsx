@@ -97,14 +97,14 @@ export default function CalendarView({ dotsByDate }: Props) {
                 {format(day, "d")}
               </div>
 
-              {/* メモドット */}
+              {/* メモドット（カテゴリ色を重複排除して表示） */}
               {hasMemos ? (
-                <div className="flex gap-0.5 justify-center">
-                  {dots.slice(0, 3).map((dot, i) => (
+                <div className="flex gap-0.5 justify-center flex-wrap px-1">
+                  {[...new Set(dots.map((d) => d.color))].map((color, i) => (
                     <span
                       key={i}
                       className="w-1.5 h-1.5 rounded-full"
-                      style={{ background: dot.color }}
+                      style={{ background: color }}
                     />
                   ))}
                 </div>
