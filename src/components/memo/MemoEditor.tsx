@@ -57,6 +57,7 @@ export default function MemoEditor({ date, categories, editing, onSave, onCancel
   }
 
   function acceptAi() {
+    setContent(aiPreview);
     setAiContent(aiPreview);
     setAiPreview("");
   }
